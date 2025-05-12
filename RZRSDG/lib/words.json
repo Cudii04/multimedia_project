@@ -1,0 +1,53 @@
+{
+  "easy": [
+    "alma",
+    "kutya",
+    "macska",
+    "szék",
+    "asztal",
+    "kép",
+    "könyv",
+    "ház",
+    "tó",
+    "labda",
+    "nap",
+    "víz",
+    "fa",
+    "tej",
+    "golyó"
+  ],
+  "medium": [
+    "vitorla",
+    "gombóc",
+    "csillag",
+    "fészek",
+    "tavasz",
+    "madzag",
+    "papucs",
+    "homokos",
+    "csengő",
+    "kerítés",
+    "kaktusz",
+    "láncfűrész",
+    "vödör",
+    "dióhéj",
+    "csokor"
+  ],
+  "hard": [
+    "sztráda",
+    "földgömb",
+    "kályha",
+    "csavarkulcs",
+    "gyűrűfűző",
+    "megfigyelőtorony",
+    "vízlágyító",
+    "hőszigetelés",
+    "környezetvédelem",
+    "nyomdaipar",
+    "villámhárító",
+    "bográcsozás",
+    "cukorborsó",
+    "áramszünet",
+    "légszomj"
+  ]
+}

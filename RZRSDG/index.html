@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Akasztófa Játék</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <h1>Akasztófa Játék</h1>
+</header>
+<button id="soundToggle">🔇</button>
+<button id="themeToggle">🌙</button>
+
+<main>
+    <section id="hangman">
+        <canvas id="hangman-canvas" width="200" height="250"></canvas>
+        <div id="word"></div>
+        <div id="letters"></div>
+    </section>
+
+    <section id="controls">
+        <button id="new-game">Új játék</button>
+        <label for="difficulty">Nehézség: </label>
+        <select id="difficulty">
+            <option value="easy">Könnyű</option>
+            <option value="medium">Közepes</option>
+            <option value="hard">Nehéz</option>
+        </select>
+    </section>
+
+    <section id="help">
+        <button onclick="toggleHelp()">Súgó</button>
+        <div id="help-text" class="hidden">
+            <p>Találd ki a szót! Kattints a betűkre, vagy használd a billentyűzetet. 7 hiba után vége a játéknak!</p>
+            <p>Használható billentyűk: A-Z</p>
+        </div>
+    </section>
+
+    <div id="stats">
+        <h3>Játékstatisztika</h3>
+        <p>Összes játék: <span id="total-games">0</span></p>
+        <p>Nyert játékok: <span id="wins">0</span></p>
+        <p>Veszített játékok: <span id="losses">0</span></p>
+        <p>Winrate: <span id="winrate">0</span>%</p>
+    </div>
+
+</main>
+
+<footer>
+    <p>Bujdosó Márk / RZRSDG</p>
+</footer>
+<!--hangok-->
+<audio id="correct-sound" src="audio/correct.mp3"></audio>
+<audio id="wrong-sound" src="audio/wrong.mp3"></audio>
+<audio id="start-sound" src="audio/start.mp3"></audio>
+
+<script src="script.js"></script>
+</body>
+</html>

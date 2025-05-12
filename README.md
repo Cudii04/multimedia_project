@@ -1,4 +1,3 @@
-# multimedia_project
 # Akasztófa – Böngészős játék
 
 Ez a projekt egy egyszerű akasztófa játék HTML, CSS és JavaScript felhasználásával. A játék magyar szavakkal működik, különböző nehézségi szintekkel, és támogatja a magyar ékezetes karaktereket is.

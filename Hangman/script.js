@@ -1,4 +1,3 @@
-// script.js
 let words = {}
 let selectedWord = "";
 let guessedLetters = [];
@@ -9,23 +8,19 @@ let soundEnabled = false;
 
 const SZAVAKELERESIUTVONALA = "lib/words.json";
 const maxWrong = 7;
+
 const wordDisplay = document.getElementById("word");
 const lettersContainer = document.getElementById("letters");
-const hangmanCanvas = document.getElementById("hangman-canvas");
+
+const canvas = document.getElementById("hangman-canvas");
+const ctx = canvas.getContext("2d");
+
 const correctSound = document.getElementById("correct-sound");
 const wrongSound = document.getElementById("wrong-sound");
 const startSound = document.getElementById("start-sound");
 
-fetch(SZAVAKELERESIUTVONALA)
-    .then(response => response.json())
-    .then(data => {
-        words = data;
-        initGame(); // Csak akkor indítjuk, ha már megvan a szólista
-    })
-    .catch(error => {
-        console.error("Nem sikerült betölteni a words.json fájlt:", error);
-        alert("Hiba történt a szólista betöltésekor.");
-    });
+const themeToggleButton = document.getElementById("themeToggle");
+const soundToggleButton = document.getElementById("soundToggle");
 
 function initGame() {
     gameOver = false;
@@ -68,8 +63,10 @@ function guessLetter(letter) {
     if (gameOver) return; // Ha vége a játéknak, ne reagáljon többet
     if (!guessedLetters.includes(letter)) {
         guessedLetters.push(letter);
-        if (selectedWord.includes(letter) && soundEnabled) {
-            correctSound.play();
+        if (selectedWord.includes(letter)) {
+            if (soundEnabled) {
+                correctSound.play();
+            }
         } else {
             wrongGuesses++;
             if (soundEnabled) {
@@ -82,6 +79,29 @@ function guessLetter(letter) {
         drawHangman();
         checkGameOver();
     }
+}
+
+function displayStats() {
+    const history = JSON.parse(localStorage.getItem("hangmanHistory") || "[]");
+    const totalGames = history.length;
+    const wins = history.filter(entry => entry.result === "win").length;
+    const losses = history.filter(entry => entry.result === "loss").length;
+    const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : 0;
+
+    document.getElementById("total-games").textContent = totalGames;
+    document.getElementById("wins").textContent = wins;
+    document.getElementById("losses").textContent = losses;
+    document.getElementById("winrate").textContent = winRate;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayStats(); // Frissíti a statisztikákat, amikor az oldal betöltődik
+});
+
+function storeResult(result) {
+    const history = JSON.parse(localStorage.getItem("hangmanHistory") || "[]");
+    history.push({word: selectedWord, result, date: new Date().toISOString()});
+    localStorage.setItem("hangmanHistory", JSON.stringify(history));
 }
 
 function checkGameOver() {
@@ -101,31 +121,6 @@ function toggleHelp() {
     document.getElementById("help-text").classList.toggle("hidden");
 }
 
-function storeResult(result) {
-    const history = JSON.parse(localStorage.getItem("hangmanHistory") || "[]");
-    history.push({word: selectedWord, result, date: new Date().toISOString()});
-    localStorage.setItem("hangmanHistory", JSON.stringify(history));
-}
-
-function displayStats() {
-    const history = JSON.parse(localStorage.getItem("hangmanHistory") || "[]");
-    const totalGames = history.length;
-    const wins = history.filter(entry => entry.result === "win").length;
-    const losses = history.filter(entry => entry.result === "loss").length;
-    const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : 0;
-
-    document.getElementById("total-games").textContent = totalGames;
-    document.getElementById("wins").textContent = wins;
-    document.getElementById("losses").textContent = losses;
-    document.getElementById("winrate").textContent = winRate;
-}
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    displayStats(); // Frissíti a statisztikákat, amikor az oldal betöltődik
-});
-
-
 function loadHistory() {
     const history = JSON.parse(localStorage.getItem("hangmanHistory") || "[]");
     console.table(history);
@@ -134,13 +129,10 @@ function loadHistory() {
 document.getElementById("new-game").addEventListener("click", initGame);
 document.addEventListener("keydown", (e) => {
     const letter = e.key.toLowerCase();
-    if (/^[a-z]$/.test(letter)) {
+    if (/^[aábcdeéfghiíjklmnoóöőpqrstuúüűvwxyz]$/.test(letter)) {
         guessLetter(letter);
     }
 });
-
-const canvas = document.getElementById("hangman-canvas");
-const ctx = canvas.getContext("2d");
 
 // Kirajzolja az akasztófát és az aktuális testrészeket
 function drawHangman() {
@@ -222,19 +214,16 @@ function drawHangman() {
 }
 
 function animateHangman() {
-    hangmanCanvas.style.transform = "scale(1.1) rotate(5deg)";
+    canvas.style.transform = "scale(1.1) rotate(5deg)";
     setTimeout(() => {
-        hangmanCanvas.style.transform = "scale(1) rotate(0deg)";
+        canvas.style.transform = "scale(1) rotate(0deg)";
     }, 300);
 }
 
-const soundToggleButton = document.getElementById("soundToggle");
 soundToggleButton.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     soundToggleButton.textContent = soundEnabled ? "🔊" : "🔇";
 });
-
-const themeToggleButton = document.getElementById("themeToggle");
 
 // Betöltéskor nézd meg, mi volt az utolsó választott téma
 if (localStorage.getItem("theme") === "dark") {
@@ -249,8 +238,15 @@ themeToggleButton.addEventListener("click", () => {
     localStorage.setItem("theme", isDark ? "dark" : "light");
 });
 
-
-// Kezdő játék
-initGame();
 loadHistory();
-drawHangman();
+
+fetch(SZAVAKELERESIUTVONALA)
+    .then(response => response.json())
+    .then(data => {
+        words = data;
+        initGame(); // Csak akkor indítjuk, ha már megvan a szólista
+    })
+    .catch(error => {
+        console.error("Nem sikerült betölteni a words.json fájlt:", error);
+        alert("Hiba történt a szólista betöltésekor.");
+    });

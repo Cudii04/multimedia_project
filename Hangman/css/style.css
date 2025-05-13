@@ -16,6 +16,26 @@ header {
     text-align: center;
 }
 
+#hangman {
+    position: relative;
+}
+
+/* Statikus akasztófa */
+#static-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* Dinamikus vászon */
+#hangman-canvas {
+    display: flex;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
 main {
     flex: 1;
     display: flex;

@@ -12,8 +12,10 @@ const maxWrong = 7;
 const wordDisplay = document.getElementById("word");
 const lettersContainer = document.getElementById("letters");
 
-const canvas = document.getElementById("hangman-canvas");
-const ctx = canvas.getContext("2d");
+const staticCanvas = document.getElementById("static-canvas");
+const staticCtx = staticCanvas.getContext("2d");
+const dynamicCanvas = document.getElementById("hangman-canvas");
+const dynamicCtx = dynamicCanvas.getContext("2d");
 
 const correctSound = document.getElementById("correct-sound");
 const wrongSound = document.getElementById("wrong-sound");
@@ -36,27 +38,18 @@ function initGame() {
     }
     updateWordDisplay();
     updateLetters();
-    drawHangman();
+    drawStaticGallows();
+    drawDynamicHangman();
     console.log("Selected word:", selectedWord);
 }
+
+document.getElementById("new-game").addEventListener("click", initGame);
 
 function updateWordDisplay() {
     wordDisplay.textContent = selectedWord
         .split("")
         .map((letter) => (guessedLetters.includes(letter) ? letter : "_"))
         .join(" ");
-}
-
-function updateLetters() {
-    lettersContainer.innerHTML = "";
-    const magyarBetuk = "aábcdeéfghiíjklmnoóöőpqrstuúüűvwxyz".split("");
-    magyarBetuk.forEach(char => {
-        const button = document.createElement("button");
-        button.textContent = char;
-        button.disabled = guessedLetters.includes(char);
-        button.addEventListener("click", () => guessLetter(char));
-        lettersContainer.appendChild(button);
-    });
 }
 
 function guessLetter(letter) {
@@ -72,14 +65,33 @@ function guessLetter(letter) {
             if (soundEnabled) {
                 wrongSound.play();
             }
-            animateHangman();
+            animateDynamicHangman();
         }
         updateWordDisplay();
         updateLetters();
-        drawHangman();
+        drawDynamicHangman();
         checkGameOver();
     }
 }
+
+function updateLetters() {
+    lettersContainer.innerHTML = "";
+    const magyarBetuk = "aábcdeéfghiíjklmnoóöőpqrstuúüűvwxyz".split("");
+    magyarBetuk.forEach(char => {
+        const button = document.createElement("button");
+        button.textContent = char;
+        button.disabled = guessedLetters.includes(char);
+        button.addEventListener("click", () => guessLetter(char));
+        lettersContainer.appendChild(button);
+    });
+}
+
+document.addEventListener("keydown", (e) => {
+    const letter = e.key.toLowerCase();
+    if (/^[aábcdeéfghiíjklmnoóöőpqrstuúüűvwxyz]$/.test(letter)) {
+        guessLetter(letter);
+    }
+});
 
 function displayStats() {
     const history = JSON.parse(localStorage.getItem("hangmanHistory") || "[]");
@@ -126,98 +138,99 @@ function loadHistory() {
     console.table(history);
 }
 
-document.getElementById("new-game").addEventListener("click", initGame);
-document.addEventListener("keydown", (e) => {
-    const letter = e.key.toLowerCase();
-    if (/^[aábcdeéfghiíjklmnoóöőpqrstuúüűvwxyz]$/.test(letter)) {
-        guessLetter(letter);
-    }
-});
-
 // Kirajzolja az akasztófát és az aktuális testrészeket
-function drawHangman() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawStaticGallows() {
+    staticCtx.clearRect(0, 0, staticCanvas.width, staticCanvas.height);
+    staticCtx.strokeStyle = "#000";
+    staticCtx.lineWidth = 2;
+    staticCtx.beginPath();
+    staticCtx.moveTo(10, 240);
+    staticCtx.lineTo(190, 240); // alap
+    staticCtx.moveTo(50, 240);
+    staticCtx.lineTo(50, 20);   // oszlop
+    staticCtx.lineTo(130, 20);
+    staticCtx.lineTo(130, 40);
+    staticCtx.stroke();
+}
 
-    // Statikus: akasztófa
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 2;
-
-    // Alap
-    ctx.beginPath();
-    ctx.moveTo(10, 240);
-    ctx.lineTo(190, 240);
-    ctx.stroke();
-
-    // Oszlop
-    ctx.beginPath();
-    ctx.moveTo(50, 240);
-    ctx.lineTo(50, 20);
-    ctx.lineTo(130, 20);
-    ctx.lineTo(130, 40);
-    ctx.stroke();
+function drawDynamicHangman() {
+    dynamicCtx.clearRect(0, 0, dynamicCanvas.width, dynamicCanvas.height);
+    dynamicCtx.strokeStyle = "#000";
+    dynamicCtx.lineWidth = 2;
 
     // Testrészek
     if (wrongGuesses > 0) {
         // Fej
-        ctx.beginPath();
-        ctx.arc(130, 60, 20, 0, Math.PI * 2);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.arc(130, 60, 20, 0, Math.PI * 2);
+        dynamicCtx.stroke();
     }
     if (wrongGuesses > 1) {
         // Törzs
-        ctx.beginPath();
-        ctx.moveTo(130, 80);
-        ctx.lineTo(130, 140);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.moveTo(130, 80);
+        dynamicCtx.lineTo(130, 140);
+        dynamicCtx.stroke();
     }
     if (wrongGuesses > 2) {
         // Bal kar
-        ctx.beginPath();
-        ctx.moveTo(130, 100);
-        ctx.lineTo(100, 120);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.moveTo(130, 100);
+        dynamicCtx.lineTo(100, 120);
+        dynamicCtx.stroke();
     }
     if (wrongGuesses > 3) {
         // Jobb kar
-        ctx.beginPath();
-        ctx.moveTo(130, 100);
-        ctx.lineTo(160, 120);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.moveTo(130, 100);
+        dynamicCtx.lineTo(160, 120);
+        dynamicCtx.stroke();
     }
     if (wrongGuesses > 4) {
         // Bal láb
-        ctx.beginPath();
-        ctx.moveTo(130, 140);
-        ctx.lineTo(110, 180);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.moveTo(130, 140);
+        dynamicCtx.lineTo(110, 180);
+        dynamicCtx.stroke();
     }
     if (wrongGuesses > 5) {
         // Jobb láb
-        ctx.beginPath();
-        ctx.moveTo(130, 140);
-        ctx.lineTo(150, 180);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.moveTo(130, 140);
+        dynamicCtx.lineTo(150, 180);
+        dynamicCtx.stroke();
     }
     if (wrongGuesses > 6) {
         // X szemek
-        ctx.beginPath();
-        ctx.moveTo(122, 52);
-        ctx.lineTo(128, 58);
-        ctx.moveTo(128, 52);
-        ctx.lineTo(122, 58);
-        ctx.moveTo(132, 52);
-        ctx.lineTo(138, 58);
-        ctx.moveTo(138, 52);
-        ctx.lineTo(132, 58);
-        ctx.stroke();
+        dynamicCtx.beginPath();
+        dynamicCtx.moveTo(122, 52);
+        dynamicCtx.lineTo(128, 58);
+        dynamicCtx.moveTo(128, 52);
+        dynamicCtx.lineTo(122, 58);
+        dynamicCtx.moveTo(132, 52);
+        dynamicCtx.lineTo(138, 58);
+        dynamicCtx.moveTo(138, 52);
+        dynamicCtx.lineTo(132, 58);
+        dynamicCtx.stroke();
     }
 }
 
-function animateHangman() {
-    canvas.style.transform = "scale(1.1) rotate(5deg)";
+function animateDynamicHangman() {
+    // Állítsuk be a forgás tengelyét a fej tetejénél
+    dynamicCanvas.style.transformOrigin = "130px 40px";
+    // Smooth átmenet
+    dynamicCanvas.style.transition = "transform 0.5s ease-in-out";
+
+    // 1. Kileng jobbra
+    dynamicCanvas.style.transform = "rotate(15deg)";
+    // 2. Fél másodperc múlva kileng balra
     setTimeout(() => {
-        canvas.style.transform = "scale(1) rotate(0deg)";
-    }, 300);
+        dynamicCanvas.style.transform = "rotate(-15deg)";
+    }, 500);
+    // 3. Újabb fél másodperc múlva vissza középre
+    setTimeout(() => {
+        dynamicCanvas.style.transform = "rotate(0deg)";
+    }, 1000);
 }
 
 soundToggleButton.addEventListener("click", () => {

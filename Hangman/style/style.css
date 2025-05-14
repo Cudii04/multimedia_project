@@ -107,7 +107,7 @@ footer {
 
 /*darkmode*/
 body.dark {
-    --bg-color: #121212;
+    --bg-color: #28282B;
     --text-color: #ffffff;
     --button-bg: #333333;
 }

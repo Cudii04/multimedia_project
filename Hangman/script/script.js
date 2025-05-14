@@ -119,7 +119,7 @@ function storeResult(result) {
 function checkGameOver() {
     if (wrongGuesses >= maxWrong) {
         gameOver = true;
-        setTimeout(() => alert("Vesztettél! A szó: " + selectedWord), 100);
+        setTimeout(() => alert("Vesztettél! A szó: " + selectedWord), 1500);
         storeResult("loss");
     } else if (!wordDisplay.textContent.includes("_")) {
         gameOver = true;

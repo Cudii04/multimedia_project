@@ -33,9 +33,6 @@ function initGame() {
     const wordList = words[difficulty];
     selectedWord = wordList[Math.floor(Math.random() * wordList.length)];
 
-    if (soundEnabled) {
-        startSound.play();
-    }
     updateWordDisplay();
     updateLetters();
     drawStaticGallows();
@@ -43,7 +40,12 @@ function initGame() {
     console.log("Selected word:", selectedWord);
 }
 
-document.getElementById("new-game").addEventListener("click", initGame);
+document.getElementById("new-game").addEventListener("click", () => {
+    if (soundEnabled) {
+        startSound.play();
+    }
+    initGame();
+});
 
 function updateWordDisplay() {
     wordDisplay.textContent = selectedWord

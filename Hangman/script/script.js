@@ -106,7 +106,22 @@ function displayStats() {
     document.getElementById("winrate").textContent = winRate;
 }
 
+document.getElementById("difficulty").addEventListener("change", (e) => {
+    localStorage.setItem("difficulty", e.target.value);
+});
+
 document.addEventListener("DOMContentLoaded", () => {
+    const savedDifficulty = localStorage.getItem("difficulty");
+    if (savedDifficulty) {
+        document.getElementById("difficulty").value = savedDifficulty;
+    }
+
+    const savedSound = localStorage.getItem("soundEnabled");
+    if (savedSound !== null) {
+        soundEnabled = savedSound === "true";
+        soundToggleButton.textContent = soundEnabled ? "🔊" : "🔇";
+    }
+
     displayStats(); // Frissíti a statisztikákat, amikor az oldal betöltődik
 });
 
@@ -236,6 +251,7 @@ function animateDynamicHangman() {
 soundToggleButton.addEventListener("click", () => {
     soundEnabled = !soundEnabled;
     soundToggleButton.textContent = soundEnabled ? "🔊" : "🔇";
+    localStorage.setItem("soundEnabled", soundEnabled);
 });
 
 // Betöltéskor nézd meg, mi volt az utolsó választott téma

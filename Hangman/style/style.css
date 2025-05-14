@@ -79,6 +79,7 @@ main {
     margin-top: 1rem;
     padding: 1rem;
     background-color: #eee;
+    color: #28282B;
     border: 1px solid #ccc;
     max-width: 400px;
 }

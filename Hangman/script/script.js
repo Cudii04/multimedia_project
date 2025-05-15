@@ -60,11 +60,15 @@ function guessLetter(letter) {
         guessedLetters.push(letter);
         if (selectedWord.includes(letter)) {
             if (soundEnabled) {
+                wrongSound.pause();
+                correctSound.currentTime = 0;
                 correctSound.play();
             }
         } else {
             wrongGuesses++;
             if (soundEnabled) {
+                correctSound.pause();
+                wrongSound.currentTime = 0;
                 wrongSound.play();
             }
             animateDynamicHangman();
